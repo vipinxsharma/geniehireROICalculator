@@ -139,6 +139,26 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;
   cursor:pointer;text-decoration:none;display:inline-block;transition:background .15s}
 .btns:hover{background:var(--navy-light)}
 
+/* ROI metric cards + tooltips */
+.rm-explain{font-size:10px;color:var(--text3);margin-top:4px;line-height:1.4;font-style:italic}
+.roi-tip{position:relative;cursor:help;transition:border-color .15s,background .15s}
+.roi-tip:hover{border-color:var(--navy);background:var(--navy-light)}
+.roi-tip::after{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
+  background:var(--navy);color:#fff;font-size:12px;line-height:1.6;
+  padding:.7rem .9rem;border-radius:var(--radius-sm);
+  width:250px;text-align:left;pointer-events:none;
+  opacity:0;transition:opacity .18s;z-index:10;
+  box-shadow:0 4px 18px rgba(66,91,140,.3);
+}
+.roi-tip::before{
+  content:"";position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:var(--navy);
+  opacity:0;transition:opacity .18s;pointer-events:none;z-index:10;
+}
+.roi-tip:hover::after,.roi-tip:hover::before{opacity:1}
+
 /* AI box */
 .aibox{background:#fff;border:1.5px solid var(--navy);border-radius:var(--radius);
   padding:1.25rem 1.5rem;margin:1.25rem 0}
@@ -252,9 +272,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;
       </div>
 
       <div class="field">
-        <div class="fhdr"><label class="flbl">Weeks role sits vacant (avg)</label><span class="fval" id="v-vwks">5</span></div>
+        <div class="fhdr"><label class="flbl">Time-to-hire (weeks)</label><span class="fval" id="v-vwks">5</span></div>
         <input type="range" min="1" max="20" value="5" step="1" oninput="V.vwks=+this.value;sv('vwks',this.value);calc()">
-        <div class="fhint">Time from opening to offer accepted</div>
+        <div class="fhint">How many weeks from <strong>job approved</strong> to <strong>offer accepted</strong> — not just posting to interview. Industry avg: 4&ndash;6 wks for mid-level, 8&ndash;12 wks for senior/specialist roles.</div>
       </div>
 
       <div class="field">
@@ -309,12 +329,31 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;
 
   <div class="div"></div>
 
-  <div class="slbl">ROI at a Glance</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.85rem">
+    <div class="slbl" style="margin-bottom:0">ROI at a Glance</div>
+    <div style="font-size:11px;color:var(--text3);font-style:italic">Hover each card for the SDR talking point</div>
+  </div>
   <div class="roigrid">
-    <div class="rm"><div class="rmval" id="rm-roi">&mdash;</div><div class="rmlbl">Return on investment</div></div>
-    <div class="rm"><div class="rmval" id="rm-pb">&mdash;</div><div class="rmlbl">Payback period</div></div>
-    <div class="rm"><div class="rmval" id="rm-hrs">&mdash;</div><div class="rmlbl">Hours recovered/yr</div></div>
-    <div class="rm"><div class="rmval" id="rm-fte">&mdash;</div><div class="rmlbl">Recruiter FTEs freed</div></div>
+    <div class="rm roi-tip" data-tip="Say to prospect: &ldquo;For every rupee you spend on GenieHire, you recover [X] rupees in recruiter time and vacancy costs. That&rsquo;s not a software purchase — that&rsquo;s a guaranteed return.&rdquo;">
+      <div class="rmval" id="rm-roi">&mdash;</div>
+      <div class="rmlbl">Return on investment</div>
+      <div class="rm-explain">Annual saving &divide; plan cost</div>
+    </div>
+    <div class="rm roi-tip" data-tip="Say to prospect: &ldquo;GenieHire pays for itself in [X] month(s). After that, every month is pure saving. When were you planning to start the hiring push?&rdquo;">
+      <div class="rmval" id="rm-pb">&mdash;</div>
+      <div class="rmlbl">Payback period</div>
+      <div class="rm-explain">Months until break-even</div>
+    </div>
+    <div class="rm roi-tip" data-tip="Say to prospect: &ldquo;Your team is burning [X] hours a year just on top-of-funnel screening. That&rsquo;s time they could spend on offers, onboarding, and employer brand — work that actually moves the needle.&rdquo;">
+      <div class="rmval" id="rm-hrs">&mdash;</div>
+      <div class="rmlbl">Hours recovered/yr</div>
+      <div class="rm-explain">85% of current screening time</div>
+    </div>
+    <div class="rm roi-tip" data-tip="Say to prospect: &ldquo;The equivalent of [X] full-time recruiter(s) is currently doing nothing but screening. GenieHire frees that capacity — either redeploy it to higher-value work or don&rsquo;t replace the next recruiter who leaves.&rdquo;">
+      <div class="rmval" id="rm-fte">&mdash;</div>
+      <div class="rmlbl">Recruiter FTEs freed</div>
+      <div class="rm-explain">Hours recovered &divide; 2,080 working hrs</div>
+    </div>
   </div>
 </div>
 
@@ -524,7 +563,7 @@ function calc() {
     planCostUSD = 899; planKey = 'corporate'; planName = 'Corporate Plan';
     planFeatures = '1000 screenings/yr<br>100 AI interviews<br>Dedicated AM<br>Team collab &middot; 3 users';
   } else {
-    planCostUSD = 899; planKey = 'enterprise'; planName = 'Enterprise &mdash; Custom';
+    planCostUSD = 899; planKey = 'enterprise'; planName = 'Enterprise — Custom';
     planFeatures = 'Unlimited screenings<br>Unlimited AI interviews<br>White labeling<br>Custom builds + integrations';
   }
 
@@ -564,7 +603,7 @@ function calc() {
 
   document.getElementById('plan-badge').className   = 'pbadge b-' + planKey;
   document.getElementById('plan-badge').textContent = planKey[0].toUpperCase() + planKey.slice(1);
-  document.getElementById('plan-name').textContent  = planName;
+  document.getElementById('plan-name').innerHTML  = planName;
   document.getElementById('plan-price').textContent = planKey === 'enterprise' ? 'Custom' : fmt(planCostLocal) + '/yr';
   document.getElementById('plan-feat').innerHTML    = planFeatures;
   document.getElementById('plan-reason').innerHTML  = planReason;
